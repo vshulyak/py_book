@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Коллекция вопросов (to keep your mind sharp) &mdash; Python book v1.0 documentation</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="Python book v1.0 documentation" href="index.html" />
+    <link rel="next" title="Pythonic" href="pythonic.html" />
+    <link rel="prev" title="Welcome to Python book’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="pythonic.html" title="Pythonic"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Python book’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Python book v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="to-keep-your-mind-sharp">
+<h1>Коллекция вопросов (to keep your mind sharp)<a class="headerlink" href="#to-keep-your-mind-sharp" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="from-habra">
+<h2>From habra<a class="headerlink" href="#from-habra" title="Permalink to this headline">¶</a></h2>
+<p>(origin: <a class="reference external" href="http://habrahabr.ru/qa/5269/">http://habrahabr.ru/qa/5269/</a>)</p>
+<ul class="simple">
+<li>В чем отличие новых и старых классов?</li>
+<li>Почему все просто не перешли на новые и не забыли о старых?</li>
+<li>С какой версии старые классы не поддерживаются?</li>
+<li>В чем отличие (i for i in arr) от [i for i in arr]?</li>
+</ul>
+<p>Проектирование, потоки:
+* Что такое гринлеты, Twisted, Tornado, в чём отличие мультипроцессинга от потоков, в чём их отличия в модулях Python(тест пройден если человек скажет что GIL работает в обоих случаях, а сами модули имеют одинаковый набор функций).
+* Про проектирование достаточно сложно говорить. Придумать простейший Singleton и объяснить какие альтернативы этому решению есть. Скажет что-то про мета-классы, про то, что сами по себе модули являются синглтоном — тест пройден.
+* Спроси что такое кольцевые зависимости. Дай пример кода с такой проблемой и попроси решить её или аргументировать почему выхода нет. Тест пройден если человек переместит все run-time используемые импорты в конец файла или перепроектирует систему, предложив вариант без кольцевых зависимостей.</p>
+<ul class="simple">
+<li>Спроси про то, как работает with, будет ли он работать с со всеми переменными. Если нет(а так и есть), то почему и что нужно сделать.</li>
+<li>Спроси про работу с юникодом. Лучше всего стимулировать на набор знаний о нём дав ошибку, которую можно найти в презентации farmdev.com/talks/unicode/, мне просто лень копипастить.</li>
+<li>Задай простейшие задачи(фазз-базз, найти самый длинный лист в листе, реализовать пару простеньких алгоритмов, не забыв дать доступ в интернет). Всё это нужно чтобы посмотреть на решения, на код. Раньше хороший программист являлся базой данных алгоритмов, сейчас есть знания, требования и важнее, поэтому интернет дайте, разрешите найти суть алгоритма(конечно, вы же не собираетесь чтобы кодеры кодили без документации, книг, интернета?).</li>
+<li>Еще можно про декораторы с параметрами спросить. Меня вот на одном собеседовании просили написать бесконечное генераторное выражение.</li>
+</ul>
+<p>(origin: <a class="reference external" href="http://pyobject.ru/blog/2010/02/04/python-quiz/">http://pyobject.ru/blog/2010/02/04/python-quiz/</a>)</p>
+</div>
+<div class="section" id="id1">
+<h2>Типы данных, основные конструкции<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Как получить список всех атрибутов объекта
+Как получить список всех публичных атрибутов объекта
+Как получить список методов объекта
+В какой &#8220;магической&#8221; переменной хранится содержимое help?
+Есть два кортежа, получить третий как конкатенацию первых двух
+Есть два кортежа, получить третий как объединение уникальных элементов первых двух кортежей
+Почему если в цикле меняется список, то используется for x in lst[:], что означает [:]?
+Есть два списка одинаковой длины, в одном ключи, в другом значения. Составить словарь.
+Есть два списка разной длины, в одном ключи, в другом значения. Составить словарь. Для ключей, для которых нет значений использовать None в качестве значения. Значения, для которых нет ключей игнорировать.
+Есть словарь. Инвертировать его. Т.е. пары ключ: значение поменять местами — значение: ключ.
+Есть строка в юникоде, получить 8-битную строку в кодировке utf-8 и cp1251
+Есть строка в кодировке cp1251, получить юникодную строку
+Функции</p>
+<p>Написать функцию, которой можно передавать аргументы либо списком/кортежем, либо по одному. Функция производит суммирование всех аргументов.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="go">14</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="go">14</span>
+<span class="go">Написать функцию-фабрику, которая будет возвращать функцию сложения с аргументом.</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">add5</span> <span class="o">=</span> <span class="n">addition</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c"># функция addition возвращает функцию сложения с 5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add5</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c"># вернет 3 + 5 = 8</span>
+<span class="go">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add5</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="c"># вернет 8 + 5 = 13</span>
+<span class="go">13</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">add8</span> <span class="o">=</span> <span class="n">addition</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add8</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c"># вернет 2 + 8 = 10</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add8</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c"># вернет 4 + 8 = 12</span>
+<span class="go">12</span>
+<span class="go">Написать варианты с обычной &quot;внутренней&quot; и анонимной lambda-функцией.</span>
+</pre></div>
+</div>
+<p>Написать фабрику, аналогичную п.2, но возвращающей список таких функций</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">additionals</span> <span class="o">=</span> <span class="n">addition_range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="c"># список из функций сложения от 0 до 5 включительно</span>
+<span class="go">т.е. аналогичное [add0, add1, add2, add3, add4, add5]</span>
+</pre></div>
+</div>
+<p>Написать аналог map:</p>
+<p>первым аргументом идет либо функция, либо список функций
+вторым аргументом — список аргументов, которые будут переданы функциям
+полагается, что эти функции — функции одного аргумента
+&gt;&gt;&gt; mymap([add0, add1, add2], [1, 2, 3])
+[(1, 2, 3), (2, 3, 4), (3, 4, 5)]
+в данном случае &#8220;развернутая&#8221; запись будет: [(add0(1), add0(2), add0(3)), (add1(1), add1(2), add1(3)), (add2(1), add2(2), add2(3))]</p>
+</div>
+<div class="section" id="id2">
+<h2>Итераторы<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Написать функцию-генератор cycle которая бы возвращала циклический итератор.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cycle</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="go">Написать функцию-генератор chain, которая последовательно итерирует переданные объекты (произвольное количество)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">i1</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i2</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">StopIteration</span>
+<span class="go">Для функций и итераторов написать доктесты</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Модули<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>У нас есть импортированный модуль foo, как узнать физический путь файла, откуда он импортирован?
+Из модуля foo вы импортируете модуль feedparser. Версия X feedparser&#8217;а есть в общесистемном каталоге site-packages, версия Y — рядом с модулем foo. Определена переменная окружения PYTHONPATH, и там тоже есть feedparser, версии Z. Какая версия будет использоваться?
+Как посмотреть список каталогов, в которых Python ищет модули?
+У вас есть модуль foo, внутри него импортируется модуль bar. Рядом с модулем foo есть файлы bar.py и bar/__init__.py Какой модуль будет использоваться.
+Что означает и для чего используется конструкция __name__ == &#8216;__main__&#8217;
+Классы</p>
+<p>Написать базовый класс Observable, который бы позволял наследникам:</p>
+<p>при передаче <a href="#id4"><span class="problematic" id="id5">**</span></a>kwargs заносить соответствующие значения как атрибуты
+сделать так, чтобы при print отображались все публичные атрибуты
+&gt;&gt;&gt; class X(Observable):
+...     pass
+&gt;&gt;&gt; x = X(foo=1, bar=5, _bazz=12, name=&#8217;Amok&#8217;, props=(&#8216;One&#8217;, &#8216;two&#8217;))
+&gt;&gt;&gt; print x
+X(bar=5, foo=1, name=&#8217;Amok&#8217;, props=(&#8216;One&#8217;, &#8216;two&#8217;))
+&gt;&gt;&gt; x.foo
+1
+&gt;&gt;&gt; x.name
+&#8216;Amok&#8217;
+&gt;&gt;&gt; x._bazz
+12
+Написать класс, который бы по всем внешним признакам был бы словарем, но позволял обращаться к ключам как к атрибутам.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">DictAttr</span><span class="p">([(</span><span class="s">&#39;one&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;two&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;three&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">{ &#39;one&#39;: 1, &#39;three&#39;: 3, &#39;two&#39;: 2}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="s">&#39;three&#39;</span><span class="p">]</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;one&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;five&#39;</span><span class="p">,</span> <span class="s">&#39;missing&#39;</span><span class="p">)</span>
+<span class="go">&#39;missing&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">one</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">five</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">AttributeError</span>
+</pre></div>
+</div>
+<p>Пункт 2 с усложнением: написать родительский класс XDictAttr так, чтобы у наследника динамически определялся ключ по наличию метода get_&lt;KEY&gt;.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">X</span><span class="p">(</span><span class="n">XDictAttr</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">get_foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="mi">5</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">get_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="mi">12</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">({</span><span class="s">&#39;one&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;two&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;three&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">X: { &#39;one&#39;: 1, &#39;three&#39;: 3, &#39;two&#39;: 2}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="s">&#39;one&#39;</span><span class="p">]</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">three</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">bar</span>
+<span class="go">12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="s">&#39;foo&#39;</span><span class="p">]</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;missing&#39;</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;bzz&#39;</span><span class="p">,</span> <span class="s">&#39;missing&#39;</span><span class="p">)</span>
+<span class="go">&#39;missing&#39;</span>
+<span class="go">Написать класс, который регистрирует свои экземпляры и предоставляет интерфейс итератора по ним</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Reg</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">&lt;Reg instance at 0x98b6ecc&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">Reg</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
+<span class="go">&lt;Reg instance at 0x98b6fec&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">Reg</span><span class="p">()</span>
+<span class="go">&lt;Reg instance at 0x98ba02c&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Reg</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">i</span>
+<span class="go">&lt;Reg instance at 0x98b6ecc&gt;</span>
+<span class="go">&lt;Reg instance at 0x98b6fec&gt;</span>
+<span class="go">&lt;Reg instance at 0x98ba02c&gt;</span>
+<span class="go">Написать юнит-тесты, за основу брать тесты выше, но не ограничиваясь ими.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>Метаклассы и дескрипторы<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>Вопросы:</p>
+<p>Для чего используются, какие аргументы получают, что должны возвращать: методы __new__ и __init__ классов
+Какие аргументы получает __new__ и __init__ у метакласса?
+Задания:</p>
+<p>Реализовать дескрипторы, которые бы фиксировали тип атрибута</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">height</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">width</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">path</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="s">&#39;/tmp/&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">size</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">340</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">height</span>
+<span class="go">340</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/tmp/x00.jpeg&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">path</span>
+<span class="go">&#39;/tmp/x00.jpeg&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="mi">320</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">TypeError</span>
+<span class="go">Реализовать базовый класс (используя метакласс), который бы фиксировал тип атрибута</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">Object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">height</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">... </span>    <span class="n">width</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">... </span>    <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/tmp&#39;</span>
+<span class="gp">... </span>    <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="mi">340</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">height</span>
+<span class="go">340</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/tmp/x00.jpeg&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">path</span>
+<span class="go">&#39;/tmp/x00.jpeg&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">img</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="mi">320</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">TypeError</span>
+<span class="go">Реализовать базовый класс (используя метакласс) и дескрипторы, которые бы на основе класса создавали SQL-схему (ANSI SQL) для модели:</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="n">Table</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">height</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">width</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">path</span> <span class="o">=</span> <span class="n">Str</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Image</span><span class="o">.</span><span class="n">sql</span><span class="p">()</span>
+<span class="go">CREATE TABLE image (</span>
+<span class="go">    height integer,</span>
+<span class="go">    width integer,</span>
+<span class="go">    path varchar(128)</span>
+<span class="go">)</span>
+<span class="go">реализовывать [NOT] NULL, PRIMARY KEY, FOREIGN KEY, CONSTRAINTS не нужно. Достаточно реализации двух типов: Integer и Str.</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Коллекция вопросов (to keep your mind sharp)</a><ul>
+<li><a class="reference internal" href="#from-habra">From habra</a></li>
+<li><a class="reference internal" href="#id1">Типы данных, основные конструкции</a></li>
+<li><a class="reference internal" href="#id2">Итераторы</a></li>
+<li><a class="reference internal" href="#id3">Модули</a></li>
+<li><a class="reference internal" href="#id6">Метаклассы и дескрипторы</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Python book&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pythonic.html"
+                        title="next chapter">Pythonic</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/questionspy.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="pythonic.html" title="Pythonic"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Python book’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Python book v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Vladimir Shulyak.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pythonic &mdash; Python book v1.0 documentation</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="Python book v1.0 documentation" href="index.html" />
+    <link rel="prev" title="Коллекция вопросов (to keep your mind sharp)" href="questionspy.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="questionspy.html" title="Коллекция вопросов (to keep your mind sharp)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Python book v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pythonic">
+<h1>Pythonic<a class="headerlink" href="#pythonic" title="Permalink to this headline">¶</a></h1>
+<p>(origin: <a class="reference external" href="http://habrahabr.ru/blogs/python/114731/">http://habrahabr.ru/blogs/python/114731/</a>)</p>
+<p>Итак, что же это значит, когда кто-либо говорит, что foo выглядит как pythonic? Что значит, когда кто-либо смотрит в наш код и говорит, что он unpythonic? Давайте попробуем разобраться.</p>
+<p>В Python-сообществе существует неологизм pythonic, который можно трактовать по разному, но в общем случае он характеризует стиль кода. Поэтому утверждение, что какой-либо код является pythonic, равносильно утверждению, что он написан в соответствии с идиома Python’a. Аналогично, такое утверждение в отношении интерфейса, или какой-либо функциональности, означает, что он (она) согласуется с идиомами Python’a и хорошо вписывается в экосистему.</p>
+<p>Напротив, метка unpythonic означает, что код представляет собой грубую попытку записать код какого-либо другого языка программирования в синтаксисе Python, а не идиоматическую трансформацию.</p>
+<p>Понятие Pythonicity плотно связано с минималистической концепцией Python’a и уходом от принципа «существует много способов сделать это». Нечитабельный код, или непонятные идиомы – все это unpythonic.</p>
+<p>При переходе от одного языка к другому, некоторые вещи должны быть «разучены». Что мы знаем из других языков программирования, что не будет к месту в Python’e?</p>
+<div class="section" id="id1">
+<h2>Используйте стандартную библиотеку<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Стандартная библиотека – наш друг. Давайте использовать ее.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span> <span class="o">=</span> <span class="s">&quot;/home/sa&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">baz</span> <span class="o">=</span> <span class="s">&quot;somefile&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">baz</span>                    <span class="c"># unpythonic</span>
+<span class="go">&#39;/home/sa/somefile&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os.path</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">foo</span><span class="p">,</span> <span class="n">baz</span><span class="p">)</span>             <span class="c"># pythonic</span>
+<span class="go">&#39;/home/sa/somefile&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Другие полезные функции в os.path: basename(), dirname() и splitext().</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">somefoo</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">somefoo</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7, 8]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">random</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">somefoo</span><span class="p">)</span>                     <span class="c"># pythonic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">somefoo</span>
+<span class="go">[8, 4, 5, 0, 7, 2, 6, 3, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">max</span><span class="p">(</span><span class="n">somefoo</span><span class="p">)</span>                                <span class="c"># pythonic</span>
+<span class="go">8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">min</span><span class="p">(</span><span class="n">somefoo</span><span class="p">)</span>                                <span class="c"># pythonic</span>
+<span class="go">0</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Существует много полезных встроенных функций, о которых многие люди по каким-либо причинам не знают. Например, min() и max(). Стандартная библиотека включает много полезных модулей. Например, random, который содержит кучу функционала, который люди по незнанию реализую самостоятельно.</p>
+</div>
+<div class="section" id="id2">
+<h2>Создание пустых списков, кортежей, словарей и т.д.<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>                        <span class="c"># unpythonic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+<span class="go">&lt;class &#39;list&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">bar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span> <span class="o">=</span> <span class="p">[]</span>                            <span class="c"># pythonic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+<span class="go">&lt;class &#39;list&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+<span class="go">&lt;class &#39;dict&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">baz</span><span class="o">=</span> <span class="nb">set</span><span class="p">()</span>                          <span class="c"># {} is a dictionary so we need to use set()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">baz</span><span class="p">)</span>
+<span class="go">&lt;class &#39;set&#39;&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Использование обратной косой черты<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Т.к. Python трактует перенос строки как разделитель выражений, и т.к. выражения очень часто не вмещаются в одну строку, многие люди поступают вот так:</p>
+<dl class="docutils">
+<dt>if foo.bar()[&#8216;first&#8217;][0] == baz.ham(1, 2)[5:9] and            # unpythonic</dt>
+<dd><dl class="first last docutils">
+<dt>verify(34, 20) != skip(500, 360):</dt>
+<dd>pass</dd>
+</dl>
+</dd>
+</dl>
+<p>Использование «» не является хорошей идеей. Такой подход может вызвать неприятный баг: случайный пробел после косой черты сделает строку неправильной. В лучшем случае мы получим syntax error, но если код предствляет что-то вроде этого:</p>
+<dl class="docutils">
+<dt>value = foo.bar()[&#8216;first&#8217;][0]*baz.ham(1, 2)[5:9]              # unpythonic</dt>
+<dd><ul class="first last simple">
+<li>verify(34, 20)*skip(500, 360)</li>
+</ul>
+</dd>
+</dl>
+<p>Тогда он будет просто нерабочим. Лучше использовать неявное продолжение строки в скобках. Подобный код является пуленепробиваемым:</p>
+<dl class="docutils">
+<dt>value = (foo.bar()[&#8216;first&#8217;][0]*baz.ham(1, 2)[5:9]               # pythonic</dt>
+<dd><ul class="first last simple">
+<li>verify(34, 20)*skip(500, 360))</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="import">
+<h2>Import<a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h2>
+<p>Не используйте «from foo import <a href="#id4"><span class="problematic" id="id5">*</span></a>». Здесь и здесь можно найти более подробную информацию.</p>
+</div>
+<div class="section" id="id6">
+<h2>Общие исключения<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p>Python имеет выражение «except», которое отлавливает все исключения. Т.к. любая ошибка генерирует исключение, такой код может сделать многие ошибки программирования похожими на ошибки времени исполнения, и затруднят отладку программы. Следующий пример является исчерпывающим:</p>
+<dl class="docutils">
+<dt>try:</dt>
+<dd>foo = opne(&#8220;somefile&#8221;)                              # misspelled &#8220;open&#8221;</dd>
+<dt>except:</dt>
+<dd>sys.exit(&#8220;could not open file!&#8221;)</dd>
+</dl>
+<p>Вторая строчка генерирует «NameError», который будет отловлен, что семантически неверно, поскольку «except» написан для отлавливания «IOError». Лучше написать такой код:</p>
+<dl class="docutils">
+<dt>try:</dt>
+<dd>foo = opne(&#8220;somefile&#8221;)</dd>
+<dt>except IOError:</dt>
+<dd>sys.exit(&#8220;could not open file&#8221;)</dd>
+</dl>
+<p>Когда Вы запустите этот код, Python сгенерирует «NameError», и Вы моментально увидите и исправите ошибку.</p>
+<p>Поскольку «except» отлавливает все исключения, включая «SystemExit», «KeyboardInterrupt», и «GeneratorExit» (которые по сути не являются ошибками и не должны отлавливаться пользовательским кодом), использование голого «except» в любом случае плохая идея. В ситуациях, когда нам нужно все-таки покрыть все возможные исключительные ситуации, мы можем использовать базовый класс для всех исключений – «Exception».</p>
+<p>Нам редко нужны счетчики</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>                         <span class="c"># unpythonic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">while</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="c"># do some stuff</span>
+<span class="gp">... </span>    <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">counter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>           <span class="c"># pythonic</span>
+<span class="gp">... </span>    <span class="c"># do some stuff</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Другой пример:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">food</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;donkey&#39;</span><span class="p">,</span> <span class="s">&#39;orange&#39;</span><span class="p">,</span> <span class="s">&#39;fish&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">food</span><span class="p">)):</span>          <span class="c"># unpythonic</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">food</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="go">donkey</span>
+<span class="go">orange</span>
+<span class="go">fish</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">food</span><span class="p">:</span>                   <span class="c"># pythonic</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="go">donkey</span>
+<span class="go">orange</span>
+<span class="go">fish</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>Явные итераторы<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>Внутри Python использует много итераторов… для циклов не должно быть исключений:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>                                                     <span class="c"># unpythonic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">while</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">somecontainer</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">callable_consuming_container_elements</span><span class="p">(</span><span class="n">somecontainer</span><span class="p">[</span><span class="n">counter</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">somecontainer</span><span class="p">:</span>                                      <span class="c"># pythonic</span>
+<span class="gp">... </span>    <span class="n">callable_consuming_container_elements</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Можно сказать, что для простых вещей мы не должны явно создавать итераторы. Есть ряд случаев, когда явные итераторы будут полезны. Например, когда мы что-то обрабатываем, останавливаемся, делаем что-либо еще, затем возвращаемся назад и продолжаем. Итератор запоминает наше положение, и это прекрасно:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">somecontainer</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">somecontainer</span><span class="p">)</span>
+<span class="go">&lt;class &#39;list&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">somecontainer</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">somecontaineriterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">somecontainer</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">somecontaineriterator</span><span class="p">)</span>
+<span class="go">&lt;class &#39;list_iterator&#39;&gt;</span>
+</pre></div>
+</div>
+<p>Теперь мы можем начать использовать наш итератор:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">somecontaineriterator</span><span class="p">:</span>          <span class="c"># start consuming the iterable somecontainer</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">item</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">break</span>                               <span class="c"># breaks out of the nearest enclosing for/while loop</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="go">0</span>
+<span class="go">1</span>
+<span class="go">2</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p>Не дайте себя обмануть, итератор остановился на «somecontaineriterator[5]», который равен 4, а не 3. Давайте посмотрим, что будет дальше:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="s">&quot;Something unrelated to somecontaineriterator.&quot;</span><span class="p">)</span>
+<span class="go">Something unrelated to somecontaineriterator.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">somecontaineriterator</span><span class="p">)</span>                    <span class="c"># continues where previous for/while loop left off</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">somecontaineriterator</span><span class="p">)</span>
+<span class="go">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">next</span><span class="p">(</span><span class="n">somecontaineriterator</span><span class="p">)</span>
+<span class="x">Traceback (most recent call last):                 # we have exhausted the iterator</span>
+  File <span class="nb">&quot;&lt;input&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">StopIteration</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Некоторым может показаться, что данный пример неоднозначен, на самом деле это не так. Итератор в цикле проходит массив, выходит из цикла по break на индексе 5 (значение внутри равно 4). Затем мы совершаем некие действия (выводим текст в консоль), и после этого продолжаем перебор итератора. Вот и все.</p>
+</div>
+<div class="section" id="id8">
+<h2>Присваивание<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>Здесь можно почитать подробно.</p>
+<p>Циклы только когда это действительно необходимо</p>
+<p>Существует много случаев, для которых в других языках программирования мы бы использовали выражения циклов, но в случае Python в этом нет необходимости.</p>
+<p>Python предоставляет много высокоуровневого функционала для оперирования любыми объектами. Для последовательностей это могут быть функции zip(), min(), max(). Затем, это такие вещи, как «list comprehensions», генераторы, «set comprehensions» и т.д.</p>
+<p>Дело в том, что если мы сохраняем наши данные в базовых структурах Python, таких как списки, кортежи, словари, множества и д.р., мы получаем кучу функционала для работы с ними «из коробки». Даже если мы нуждаемся в специфичной структуре, скорее всего не составит труда создать ее, используя базовый структуры данных. Итак, в чем же преимущества. Как мы можем получить список имен некоторых людей, хранящийся в дисковом файле.</p>
+<dl class="docutils">
+<dt><a class="reference external" href="mailto:sa&#37;&#52;&#48;wks">sa<span>&#64;</span>wks</a>:/tmp$ cat people.txt</dt>
+<dd>Dora</dd>
+<dt>John</dt>
+<dd>Dora</dd>
+</dl>
+<p>Mike
+Dora</p>
+<blockquote>
+<div>Alex</div></blockquote>
+<p>Alex
+<a class="reference external" href="mailto:sa&#37;&#52;&#48;wks">sa<span>&#64;</span>wks</a>:/tmp$ python
+&gt;&gt;&gt; with open(&#8216;people.txt&#8217;, encoding=&#8217;utf-8&#8217;) as a_file:     # context manager
+...     { line.strip() for line in a_file }                  # set comprehension
+...
+...
+{&#8216;Alex&#8217;, &#8216;Mike&#8217;, &#8216;John&#8217;, &#8216;Dora&#8217;}
+&gt;&gt;&gt;</p>
+<p>Никаких циклов, пользовательских структур данных, убраны лишние пробелы и дубликаты, все pythonic ;-]</p>
+<p>Кортежи – это не просто read-only списки</p>
+<p>Это распространенное заблуждение. Очень часто списки и кортежи применяются для одних и тех же целей. Списки предназначены для хранения однотипных данных. В то время как кортежи – для объединения данных разного типа в набор. Другими словами</p>
+<p>Целое — больше чем сумма его частей.
+— Аристотель (384 д.н.э — 322 д.н.э)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">person</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Steve&quot;</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="s">&quot;male&quot;</span><span class="p">,</span> <span class="s">&quot;London&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="s">&quot;{} is {}, {} and lives in {}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">person</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+<span class="go">Steve is 23, male and lives in London.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">person</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;male&quot;</span><span class="p">,</span> <span class="s">&quot;Steve&quot;</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="s">&quot;London&quot;</span><span class="p">)</span>              <span class="c">#different tuple, same code</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="s">&quot;{} is {}, {} and lives in {}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">person</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">person</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+<span class="go">male is Steve, 23 and lives in London.</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Индекс в кортеже несет смысловую нагрузку. Давайте сравним эти структуры:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span> <span class="o">=</span> <span class="mi">2011</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">59</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">foo</span>
+<span class="go">(2011, 11, 3, 15, 23, 59)                               # tuple</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7, 8]                             # list</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Первая из них, кортеж, представляет собой структуру, где позиция элемента несет некий смысл (Первый элемент — год).
+Вторая же, список, представляет собой последовательность, в которой значения функционально равнозначны, индекс не несет никакого смысла.</p>
+<p>Отличный пример использования обоих структур – метод fetchmany() из Python DB API, который возвращает результат как список кортежей.</p>
+<p>Классы не предназначены для группировки функциональности</p>
+<p>C# и Java содержат код только внутри классов. В итоге возникают утилитарные классы, содержащие одни статические методы. Например, математическая функция sin(). В Python мы просто используем модуль верхнего уровня:</p>
+<p><a class="reference external" href="mailto:sa&#37;&#52;&#48;wks">sa<span>&#64;</span>wks</a>:/tmp$ echo -e &#8216;def sin():n    pass&#8217; &gt; foo.py; cat foo.py
+def sin():</p>
+<blockquote>
+<div>pass</div></blockquote>
+<p><a class="reference external" href="mailto:sa&#37;&#52;&#48;wks">sa<span>&#64;</span>wks</a>:/tmp$ python
+&gt;&gt;&gt; import foo
+&gt;&gt;&gt; foo.sin()
+&gt;&gt;&gt;</p>
+</div>
+<div class="section" id="id9">
+<h2>Скажите нет геттерам и сеттерам<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>Способ достичь инкапсуляции в Python – использование свойств, а не геттеров и сеттеров. Используя свойства, мы можем изменить атрибуты объекта и исправить реализацию, не затрагивая вызываемый код (читайте, stable API).</p>
+</div>
+<div class="section" id="id10">
+<h2>Функции являются объектами<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<p>В Python – все является объектами. Функции тоже объекты. Функции – это объекты, которые можно вызывать.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">somefoo</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;price&#39;</span><span class="p">:</span> <span class="mf">9.99</span><span class="p">},</span> <span class="p">{</span><span class="s">&#39;price&#39;</span><span class="p">:</span> <span class="mf">4.99</span><span class="p">},</span> <span class="p">{</span><span class="s">&#39;price&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">somefoo</span>
+<span class="go">[{&#39;price&#39;: 9.99}, {&#39;price&#39;: 4.99}, {&#39;price&#39;: 10}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">lookup_price</span><span class="p">(</span><span class="n">someobject</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">someobject</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">somefoo</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">lookup_price</span><span class="p">)</span>                        <span class="c"># pass function object lookup_price</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">somefoo</span>
+<span class="go">[{&#39;price&#39;: 4.99}, {&#39;price&#39;: 9.99}, {&#39;price&#39;: 10}]         # in-place sort of somefoo took place</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">somefoo</span><span class="p">)</span>
+<span class="go">&lt;class &#39;list&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">somefoo</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">&lt;class &#39;dict&#39;&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Между lookup_price и lookup_price() существует разница — последнее вызывает функцию, а первое смотрим биндинг по имени lookup_price. Это дает нам возможность использовать функции в роли обычных объектов.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Pythonic</a><ul>
+<li><a class="reference internal" href="#id1">Используйте стандартную библиотеку</a></li>
+<li><a class="reference internal" href="#id2">Создание пустых списков, кортежей, словарей и т.д.</a></li>
+<li><a class="reference internal" href="#id3">Использование обратной косой черты</a></li>
+<li><a class="reference internal" href="#import">Import</a></li>
+<li><a class="reference internal" href="#id6">Общие исключения</a></li>
+<li><a class="reference internal" href="#id7">Явные итераторы</a></li>
+<li><a class="reference internal" href="#id8">Присваивание</a></li>
+<li><a class="reference internal" href="#id9">Скажите нет геттерам и сеттерам</a></li>
+<li><a class="reference internal" href="#id10">Функции являются объектами</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="questionspy.html"
+                        title="previous chapter">Коллекция вопросов (to keep your mind sharp)</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/pythonic.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="questionspy.html" title="Коллекция вопросов (to keep your mind sharp)"
+             >previous</a> |</li>
+        <li><a href="index.html">Python book v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Vladimir Shulyak.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
