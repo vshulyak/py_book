@@ -14,6 +14,7 @@ Contents:
    questionspy
    pythonic
    pyobjectnotes
+   resources
 
 Indices and tables
 ==================
