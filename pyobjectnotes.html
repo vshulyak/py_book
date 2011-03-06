@@ -1,0 +1,1175 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Заметки об объектной системе языка 1 &mdash; Python book v1.0 documentation</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="Python book v1.0 documentation" href="index.html" />
+    <link rel="prev" title="Pythonic" href="pythonic.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="pythonic.html" title="Pythonic"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Python book v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1>Заметки об объектной системе языка 1<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>(origin: <a class="reference external" href="http://habrahabr.ru/blogs/python/114576/">http://habrahabr.ru/blogs/python/114576/</a>)</p>
+<p>Несколько заметок об объектной системе python&#8217;a. Рассчитаны на тех, кто уже умеет программировать на python. Речь идет только о новых классах (new-style classes) в python 2.3 и выше. В этой статье рассказывается, что такое объекты и как происходит поиск атрибутов.</p>
+<div class="section" id="id2">
+<h2>Объекты<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Все данные в питоне — это объекты. Каждый объект имеет 2 специальных атрибута __class__ и __dict__.
+__class__ — определяет класс или тип, экзмепляром которого является объект. Тип (или класс объекта) определяет его поведение; он есть у всех объектов, в том числе и встроенных. Тип и класс — это разные названия одного и того же. x.__class__ &lt;==&gt; type(x).
+__dict__ словарь, дающий доступ к внутреннему пространству имен, он есть почти у всех объектов, у многих встроенных типов его нет.
+Примеры.</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; def foo(): pass
+...
+&gt;&gt;&gt; foo.__class__
+&lt;type 'function'&gt;
+&gt;&gt;&gt; foo.__dict__
+{}
+&gt;&gt;&gt; (42).__dict__
+Traceback (most recent call last):
+File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+AttributeError: 'int' object has no attribute '__dict__'
+&gt;&gt;&gt; (42).__class__
+&lt;type 'int'&gt;
+&gt;&gt;&gt; class A(object):
+...     qux = 'A'
+...     def __init__(self, name):
+...         self.name=name
+...     def foo(self):
+...         print 'foo'
+...
+&gt;&gt;&gt; a = A('a')</pre>
+</div>
+<p>У a тоже есть __dict__ и __class__:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>   <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;a&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__class__</span>
+<span class="go">&lt;class &#39;__main__.A&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">&lt;class &#39;__main__.A&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__class__</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Класс и тип — это одно и то же.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__class__</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">is</span> <span class="n">A</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>a.__dict__ — это словарь, в котором находятся внутренние (или специфичные для объекта) атрибуты, в данном случае &#8216;name&#8217;. А в a.__class__ класс (тип).</p>
+<p>И, например, в методах класса присваивание self.foo = bar практически идентично self.__dict__[&#8216;foo&#8217;] = bar или сводится к аналогичному вызову.</p>
+<p>В __dict__ объекта нет методов класса, дескрипторов, классовых переменных, свойств, статических методов класса, все они определяются динамически с помощью класса из __class__ атрибута, и являются специфичными именно для класса (типа) объекта, а не для самого объекта.</p>
+<p>Пример. Переопределим класс объекта a:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">qux</span> <span class="o">=</span> <span class="s">&#39;B&#39;</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;B object&#39;</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="go"> ...         print &#39;bar&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{&#39;name&#39;: &#39;a&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="go">foo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__class__</span>
+<span class="go">&lt;class &#39;__main__.A&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__class__</span> <span class="o">=</span> <span class="n">B</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__class__</span>
+<span class="go">&lt;class &#39;__main__.B&#39;&gt;</span>
+</pre></div>
+</div>
+<p>Смотрим, что поменялось.</p>
+<p>Значение a.name осталось прежним, т.е. __init__ не вызывался при смене класса.</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; a.__dict__
+{'name': 'a'}
+Доступ к классовым переменным и методам «прошлого» класса A пропал:
+&gt;&gt;&gt; a.foo()
+Traceback (most recent call last):
+File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+AttributeError: 'B' object has no attribute 'foo'
+А вот классовые переменные и методы класса B доступы:
+&gt;&gt;&gt; a.bar()
+bar
+&gt;&gt;&gt; a.qux
+'B'</pre>
+</div>
+<p>Работа с атрибутам объекта: установка, удаление и поиск, равносильна вызову встроенных функций settattr, delattr, getattr:</p>
+<p>a.x = 1 &lt;==&gt; setattr(a, &#8216;x&#8217;, 1)
+del a.x &lt;==&gt; delattr(a, &#8216;x&#8217;)
+a.x &lt;==&gt; getattr(a, &#8216;x&#8217;)</p>
+<p>При этом стоит стоит понимать, что setattr и delattr влияют и изменяют только сам объект (точнее a.__dict__), и не изменяют класс объекта.</p>
+<p>qux — является классовой переменной, т.е. она «принадлежит» классу B, а не объекту a:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;B&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{&#39;name&#39;: &#39;a&#39;}</span>
+</pre></div>
+</div>
+<p>Если мы попытаемся удалить этот атрибут, то получим ошибку, т.к. delattr будет пытаться удалить атрибут из a.__dict__</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; delattr(a, 'qux')
+Traceback (most recent call last):
+File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+AttributeError: qux
+&gt;&gt;&gt; del a.qux
+Traceback (most recent call last):
+File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+AttributeError: qux
+&gt;&gt;&gt; a.qux
+'B'
+&gt;&gt;&gt;</pre>
+</div>
+<p>Далее, если мы попытаемся изменить (установить) атрибут, setattr поместит его в __dict__, специфичный для данного, конкретного объекта.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;B&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">qux</span> <span class="o">=</span> <span class="s">&#39;myB&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;myB&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{&#39;qux&#39;: &#39;myB&#39;, &#39;name&#39;: &#39;a&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;B&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Ну и раз есть &#8216;qux&#8217; в __dict__ объекта, его можно удалить с помощью delattr:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">a</span><span class="o">.</span><span class="n">qux</span>
+</pre></div>
+</div>
+<p>После удаления, a.qux будет возвращать значение классовой переменной:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;B&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{&#39;name&#39;: &#39;a&#39;}</span>
+</pre></div>
+</div>
+<p>Итак:
+класс для объекта — это значение специального атрибута __class__ и его можно менять. (Хотя в официальной документации говорится, что никаких гарантий нет, но на самом деле можно)
+почти каждый объект имеет свое пространство имен (атрибутов), доступ (не всегда полный), к которому осуществляется с помощью специального атрибута __dict__
+класс фактичеки влияет только на поиск атрибутов, которых нет в __dict__, как-то: методы класса, дескрипторы, магические методы, классовые переменные и прочее.</p>
+</div>
+<div class="section" id="id3">
+<h2>Объекты и классы<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Классы — это объекты, и у них тоже есть специальные атрибуты __class__ и __dict__.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<p>У класса тип type.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__class__</span>
+<span class="go">&lt;type &#39;type&#39;&gt;</span>
+</pre></div>
+</div>
+<p>Правда __dict__ у классов не совсем словарь</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">&lt;dictproxy object at 0x1111e88&gt;</span>
+</pre></div>
+</div>
+<p>Но __dict__ ответственен за доступ к внутреннему пространству имен, в котором хранятся методы, дескрипторы, переменные, свойства и прочее:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+<span class="go">{&#39;__module__&#39;: &#39;__main__&#39;, &#39;qux&#39;: &#39;A&#39;, &#39;__dict__&#39;: &lt;attribute &#39;__dict__&#39; of &#39;A&#39; objects&gt;, &#39;foo&#39;: &lt;function foo at 0x7f7797a25c08&gt;, &#39;__weakref__&#39;: &lt;attribute &#39;__weakref__&#39; of &#39;A&#39; objects&gt;, &#39;__doc__&#39;: None}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">[&#39;__module__&#39;, &#39;qux&#39;, &#39;__dict__&#39;, &#39;foo&#39;, &#39;__weakref__&#39;, &#39;__doc__&#39;]&lt;</span>
+</pre></div>
+</div>
+<p>В классах помимо __class__ и __dict__, имеется еще несколько специальных атрибутов: __bases__ — список прямых родителей, __name__ — имя класса. [1]</p>
+<p>Классы можно считать эдакими расширениями обычных объектов, которые реализуют интерфейс типа. Множество всех классов (или типов) принадлежат множеству всех объектов, а точнее является его подмножеством. Иначе говоря, любой класс является объектом, но не всякий объект является классом. Договоримся называть обычными объектами(regular objects) те объекты, которые классами не являются.</p>
+<p>Небольшая демонстрация, которая станет лучше понятна чуть позже.
+Класс является объектом.
+&gt;&gt;&gt; class A(object):
+...     pass
+...</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Число — это тоже объект.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Класс — это класс (т.е. тип).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>А вот число классом (типом) не является. (Что такое type будет пояснено позже)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Ну и a — тоже обычный объект.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>И у A всего один прямой родительский класс — object.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__bases__</span>
+<span class="go">(&lt;type &#39;object&#39;&gt;,)</span>
+</pre></div>
+</div>
+<p>Часть специальных параметров можно даже менять:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__name__</span>
+<span class="go">&#39;A&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="s">&#39;B&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">&lt;class &#39;__main__.B&#39;&gt;</span>
+</pre></div>
+</div>
+<p>С помощью getattr получаем доступ к атрибутам класса:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;A&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">foo</span>
+<span class="go">&lt;unbound method A.foo&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>Поиск атрибутов в обычном объекте<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>В первом приближении алгоритм поиска выглядит так: сначала ищется в __dict__ объекта, потом идет поиск по __dict__ словарям класса объекта (который определяется с помощью __class__) и __dict__ его базовых классов в рекурсивном порядке.</p>
+<p>Пример.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">qux</span> <span class="o">=</span> <span class="s">&#39;A&#39;</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="n">name</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&#39;foo&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Т.к. в обычных объектах a и b нет в __dict__ атрибута &#8216;qux&#8217;, то поиск продолжается во внутреннем словаре __dict__ их типа (класса), а потом по __dict__ словарям родителей в определенном порядке:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;A&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;A&#39;</span>
+</pre></div>
+</div>
+<p>Меняем атрибут qux у класса A. И соответственно должны поменяться значения, которые возвращают экземпляры класса A — a и b:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">qux</span><span class="o">=</span><span class="s">&#39;B&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;B&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">qux</span>
+<span class="go">&#39;B&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Точно так же в рантайме к классу можно добавить метод:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">quux</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="s">&#39;i have quux method&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;quux&#39;</span><span class="p">]</span>
+<span class="go">&lt;function &lt;lambda&gt; at 0x7f7797a25b90&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">quux</span>
+<span class="go">&lt;unbound method A.&lt;lambda&gt;&gt;</span>
+</pre></div>
+</div>
+<p>И доступ к нему появится у экземпляров:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">quux</span><span class="p">()</span>
+<span class="go">&#39;i have quux method&#39;</span>
+</pre></div>
+</div>
+<p>Точно так же как и с любыми другими объектами, можно удалить атрибут класса, например, классовую переменную qux:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">A</span><span class="o">.</span><span class="n">qux</span>
+</pre></div>
+</div>
+<p>Она удалиться из __dict__</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; A.__dict__['qux']
+Traceback (most recent call last):
+File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+KeyError: 'qux'</pre>
+</div>
+<p>И доступ у экземляров пропадет.</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; a.qux
+Traceback (most recent call last):
+File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+AttributeError: 'A' object has no attribute 'qux'
+&gt;&gt;&gt;</pre>
+</div>
+<p>У классов почти такой же поиск атрибутов, как и у обычных объектов, но есть отличия: поиск начинается с собственного __dict__ словаря, а потом идет поиск по __dict__ словарям суперклассов (которые хранятся в __bases__) по опредленному алгоритму, а затем по классу в __class__ и его суперклассах. (Подробнее об этом позже).</p>
+</div>
+<div class="section" id="c">
+<h2>Cсылки<a class="headerlink" href="#c" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Unifying types and classes in Python — главный документ, объясняющий что, как и зачем в новых классах. <a class="reference external" href="http://www.python.org/download/releases/2.2.3/descrintro/#references">http://www.python.org/download/releases/2.2.3/descrintro/#references</a></li>
+<li>Making Types Look More Like Classes — PEP 252, описывающий отличие старых классов от новых. <a class="reference external" href="http://www.python.org/dev/peps/pep-0252/">http://www.python.org/dev/peps/pep-0252/</a></li>
+<li>Built-in functions — детальное описание работы всех встроенных функций. <a class="reference external" href="http://docs.python.org/library/functions.html">http://docs.python.org/library/functions.html</a></li>
+<li>Data model — детальное описание модели данных python&#8217;а. <a class="reference external" href="http://docs.python.org/reference/datamodel.html">http://docs.python.org/reference/datamodel.html</a></li>
+<li>Python types and objects — объяснение объектной модели python на простых примерах с картинками. <a class="reference external" href="http://www.cafepy.com/article/python_types_and_objects/python_types_and_objects.html">http://www.cafepy.com/article/python_types_and_objects/python_types_and_objects.html</a></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h2>Примечания<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>[1] О __module__ и __doc__ для простоты изложения пока забудем. Полный список атрибутов класса можно посмотреть в документации <a class="reference external" href="http://docs.python.org/reference/datamodel.html#the-standard-type-hierarchy">http://docs.python.org/reference/datamodel.html#the-standard-type-hierarchy</a></p>
+</div>
+</div>
+<div class="section" id="id6">
+<h1>Заметки об объектной системе языка 2<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h1>
+<p>(origin: <a class="reference external" href="http://habrahabr.ru/blogs/python/114585/">http://habrahabr.ru/blogs/python/114585/</a>)</p>
+<p>Вторая часть заметок об объектной системе python&#8217;a (первая часть тут). В этой статье рассказывается, что такое классы, метаклассы, type, object и как происходит поиск атрибутов в классе.</p>
+<div class="section" id="id7">
+<h2>Классы<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>Классы (типы) — это объектные фабрики. Их главная задача — создавать объекты, обладающие определенным поведением.</p>
+<p>Классы определяют поведение объектов с помощью своих атрибутов (которые хранятся в __dict__ класса): методов, свойств, классовых переменные, дескрипторов, а также с помощью атрибутов, унаследованных от родительских классов.</p>
+<p>Инстанцирование обычного объекта происходит в 2 этапа: сначала его создание, потом инициализация. Соответственно, сначала запускается метод класса __new__, который возвращает объект данного класса, потом выполняется метод класса __init__, который инициализирует уже созданный объект.</p>
+<p>def __new__(cls, ...) — статический метод (но его можно таковым не объявлять), который создает объект класса cls.</p>
+<p>def __init__(self, ...) — метод класса, который инициализирует созданный объект.</p>
+<p>Например, объявим класс:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Для класса A не определены ни __new__, ни __init__. В соответствии с алгоритмом поиска атрибутов для класса (типа), который не стоит путать с алгоритмом поиска атрибутов для обычных объектов, когда класс не найдет их в своем__dict__, он будет искать эти методы в __dict__ своих базовых (родительских) классах.</p>
+<p>Класс А имеет в качестве родителя встроенный класс object. Таким образом он будет их искать в object.__dict__</p>
+<p>И найдет:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;__init__&#39;</span><span class="p">]</span>
+<span class="go">&lt;slot wrapper &#39;__init__&#39; of &#39;object&#39; objects&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;__new__&#39;</span><span class="p">]</span>
+<span class="go">&lt;built-in method __new__ of type object at 0x82e780&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Раз есть такие методы, значит, получается, что a = A() аналогичен последовательности вызовов:</p>
+<p>a = object.__new__(A)
+object.__init__(a)</p>
+<p>В общем виде, используя super, который как раз и реализует алгоритм поиска атрибутов по родительским классам [1]:</p>
+<p>a = super(A, A).__new__(A)
+super(A, A).__init__(a)</p>
+<p>Пример.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&#39;created object&#39;</span><span class="p">,</span> <span class="n">obj</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">obj</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&#39;initing object&#39;</span><span class="p">,</span> <span class="bp">self</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">()</span>
+<span class="go">created object &lt;__main__.A object at 0x1620ed0&gt;</span>
+<span class="go">initing object &lt;__main__.A object at 0x1620ed0&gt;</span>
+<span class="go">&lt;__main__.A object at 0x1620ed0&gt;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="singleton-v-1">
+<h2>Singleton v.1<a class="headerlink" href="#singleton-v-1" title="Permalink to this headline">¶</a></h2>
+<p>Понимая, как происходит создание объекта, можно написать реализацию паттерна одиночка.</p>
+<p>Мы должны гарантировать, что у класса есть только один экземпляр. Т.е. при вызове конструктора класса, всегда возвращаем один и тот же экземпляр класса.</p>
+<p>А это значит, что при вызов метода __new__ должен возвращать каждый раз один и тот же объект. Хранить сам объект можно, например, в классовой переменной instance.</p>
+<p>В результате получаем:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">instance</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">instance</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">cls</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">instance</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="p">()</span> <span class="ow">is</span> <span class="n">C</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="p">()</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">x</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">x</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">x</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">x</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>Классы и метаклассы<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>Для класса (типа), так же как и для обычного объекта, существует класс (тип), который создает классы и определяет поведение класса. Этот класс называется метаклассом.</p>
+<p>Создание класса, как и обычного объекта происходит с помощью вызова конструктора, но т.к. в классе есть несколько дополнительных специальных атрибутов, которые должны быть инициализированы, в конструктор передаются и соответствующие обязательные параметры.</p>
+<p>XClass = XMetaClass(name, bases, attrs)</p>
+<p>Тогда, сразу после создания
+XClass.__name__ равно name,
+XClass.__bases__ равен bases,
+XClass.__dict__ равен attrs, а
+XClass.__class__ равен XMetaClass</p>
+<p>По умолчанию для всех определяемых классов метаклассом является type.</p>
+<p>Таким образом.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<p>Эквивалентно, по аналогии с обычными объектами:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">object</span><span class="p">,),</span> <span class="p">{})</span>
+<span class="go">&lt;class &#39;__main__.A&#39;&gt;</span>
+</pre></div>
+</div>
+<p>А это:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="mi">42</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<p>эквивалентно</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="s">&#39;B&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">A</span><span class="p">,),</span> <span class="p">{</span><span class="s">&#39;foo&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="mi">42</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>При определении класса, можно задать свой метакласс с помощью
+классовой переменной __metaclass__:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">Meta</span>
+<span class="gp">...</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Что равносильно: A = Meta(&#8216;A&#8217;, (object,), {})</p>
+</div>
+<div class="section" id="type-object">
+<h2>О type и object<a class="headerlink" href="#type-object" title="Permalink to this headline">¶</a></h2>
+<p>Прежде всего type и object — это объекты. И, как у всех порядочных объектов, у них есть специальные атрибуты __class__ и __dict__:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span><span class="o">.</span><span class="n">__class__</span>
+<span class="go">&lt;type &#39;type&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="o">.</span><span class="n">__class__</span>
+<span class="go">&lt;type &#39;type&#39;&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">&lt;dictproxy object at 0x7f7797a1cf30&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">&lt;dictproxy object at 0x7f7797a1cfa0&gt;</span>
+</pre></div>
+</div>
+<p>Более того object, и type — это объекты типа (классы), и у них тоже есть специальные атрибуты __name__, __bases___:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span><span class="o">.</span><span class="n">__name__</span>
+<span class="go">&#39;object&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="o">.</span><span class="n">__name__</span>
+<span class="go">&#39;type&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">object</span><span class="o">.</span><span class="n">__bases__</span>
+<span class="go">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="o">.</span><span class="n">__bases__</span>
+<span class="go">(&lt;type &#39;object&#39;&gt;,)</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Экземпляры типа или класса object — это объекты (любые). Т.е. любой объект — экземпляр класса object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">setattr</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Даже функция является объектом:
+&gt;&gt;&gt; def bar():
+...     pass
+...
+&gt;&gt;&gt; isinstance(bar, object)
+True</p>
+<p>Кроме того, класс object сам является своим экземпляром:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>type тоже является его экземпляром:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Инстанцирование — object() возвращает самый простой и общий объект:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">o</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>У которого даже __dict__ нет, есть только __class__.</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; o.__dict__
+Traceback (most recent call last):
+File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+AttributeError: 'object' object has no attribute '__dict__'
+&gt;&gt;&gt; o.__class__
+&lt;type 'object'&gt;
+&gt;&gt;&gt;</pre>
+</div>
+<p>Экземпляры класса или типа type — это только другие классы или другие типы:</p>
+<p>Число — это не класс</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Строка тоже</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Встроенная функция setattr тоже не класс.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">setattr</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Класс — это класс.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Тип строки — это класс.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Т.к. object и type — тоже классы, то они являются экземплярами класса type:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Т.к. множество классов (типов) являются подмножеством множества объектов, то логично предположить, что type является подклассом object, т.е.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">issubclass</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">issubclass</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>type — это просто класс, экземплярами которого являются другие классы. (т.е. метакласс). А сами классы можно считать расширением простых, обычных объектов.</p>
+<p>Таким образом, когда мы наследуем класс от object, этот класс автоматически наследует поведение класса object, т.е. при инстанцировании он будет возвращать обычный объект. А когда мы наследуем от класса type, мы также автоматически наследуем поведение класса type, т.е. при инстацированни будет создаваться класс. А класс, который создает класс, называется метаклассом.</p>
+<p>Значит, чтобы определить просто класс, нужно наследовать его от object, чтобы определить метакласс — наследуем его от type.</p>
+<p>И еще: не нужно путать type(a) и type(name, bases, attrs).
+type(a) — вызов с одним аргументом, возвращает тип объекта,
+a type(name, bases, attrs) — вызов с тремя аргументами — это вызов конструктора класса.</p>
+<p>О поиске атрибутов в классе</p>
+<p>Как уже было отмечено, алгоритм поиска атрибутов в обычном объекте, но есть некоторые тонкости, т.к. у типов (классов) есть __bases__ — родительские классы (типы).</p>
+<p>Если атрибут есть в __dict__ возвращается он, затем идет поиск по базовым классам из __bases__, а потом идет обращение к __dict__ __class__&#8217;а (т.е. фактически метакласса) и его (метакласса) родительских классов (метаклассов).</p>
+<p>Небольшой пример:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Ameta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&#39;Ameta.foo&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">Ameta</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="go">Ameta.foo</span>
+</pre></div>
+</div>
+<p>Все что определяется в метаклассе доступно для класса, но не доступно для экзмепляров класса — обычных объектов, т.к. поиск атрибутов в обычном объекте ведется только по __dict__ словарям класса.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">foo</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">AttributeError</span>: <span class="n">&#39;A&#39; object has no attribute &#39;foo&#39;</span>
+</pre></div>
+</div>
+<p>В A.__dict__ &#8216;foo&#8217; нет:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;foo&#39;</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;foo&#39;</span>
+</pre></div>
+</div>
+<p>Зато он есть в метаклассе, поэтому:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="go">Ameta.foo</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nd">@classmethod</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&#39;B.foo&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">foo</span>   <span class="c"># т.к. foo есть B.__dict__ вернется значение B.__dict__[&#39;foo&#39;]</span>
+<span class="go">&lt;bound method Ameta.foo of &lt;class &#39;__main__.B&#39;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="go">B.foo</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="n">B</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>  <span class="c"># вернет значение из базового класса B.</span>
+<span class="go">B.foo</span>
+</pre></div>
+</div>
+<p>Экземпляр класса C также вызовет метод foo из класса B.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="go">B.foo</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">D</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="go">Ameta.foo</span>
+</pre></div>
+</div>
+<p>А экземпляр D не найдет:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">D</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">AttributeError</span>: <span class="n">&#39;D&#39; object has no attribute &#39;foo&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>Метаклассы<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p>Метаклассы являются фабриками классов (или типов). Инстанцирование класса тоже проходит в 2 этапа — создание объекта типа (класса) и его инициализация. Это также делается с помощью двух методов метакласса. Сначала вызывается метод __new__ метакласса с параметрами, необходимыми для создания класса — name, bases, attrs, а потом __init__ с теми же параметрами и уже созданным классом.</p>
+<p>Пример.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Meta</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">object</span><span class="p">,),</span> <span class="p">{})</span>
+<span class="go">&lt;class &#39;__main__.A&#39;&gt;</span>
+</pre></div>
+</div>
+<p>В начале метакласс Meta ищет метод __new__ у себя в словаре __dict__, не находит его там и начинает искать в __dict__ своих родительских классах (т.е. метаклассах, в данном случае type), т.е. происходит обычный поиск атрибута в классе. В результате исполнения __new__ с соответствующими параметрами получает новый класс, который потом инициализируется вызовом __init__ метода метакласса.</p>
+<p>В совсем развернутом виде получается:</p>
+<p>cls = type.__dict__[&#8216;__new__&#8217;](Meta, &#8216;A&#8217;, (object,), {})
+type.__dict__[&#8216;__init__&#8217;](cls, &#8216;A&#8217;, (object,), {})</p>
+<p>Или с помощью super</p>
+<p>cls = super(Meta, Meta).__new__(Meta, &#8216;A&#8217;, (object,), {})
+super(Meta, Meta).__init__(cls, &#8216;A&#8217;, (object,), {})</p>
+<p>Стоит отметить, что в отличие от инстанцирования обычных объектов, используется не object.__new__ и object.__init__, а type.__new__ и type.__init__. У object.__new__ и type.__new__ разные сигнатуры, и object.__new__ возвращает обычный объект (regular object), а type.__new__ — объект типа (typeobject), т.е. класс.</p>
+<p>Посмотрим, как это все работает на примере.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&#39;creating new class&#39;</span><span class="p">,</span> <span class="n">name</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Meta</span><span class="p">,</span> <span class="n">mcls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&#39;initing new class&#39;</span><span class="p">,</span> <span class="n">name</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">Meta</span>
+<span class="gp">...</span>
+<span class="go">creating new class A</span>
+<span class="go">initing new class A</span>
+</pre></div>
+</div>
+<p>Во время инстанцирования просто объекта, никаких надписей не выводится.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Кроме того, соответственно, во методах __new__ и __init__ метакласса можно менять все: имя, список суперклассов, атрибуты.</p>
+</div>
+<div class="section" id="id10">
+<h2>Cсылки<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Unifying types and classes in Python — главный документ, объясняющий что, как и зачем в новых классах. <a class="reference external" href="http://www.python.org/download/releases/2.2.3/descrintro/#references">http://www.python.org/download/releases/2.2.3/descrintro/#references</a></li>
+<li>Making Types Look More Like Classes — PEP 252, описывающий отличие старых классов от новых. <a class="reference external" href="http://www.python.org/dev/peps/pep-0252/">http://www.python.org/dev/peps/pep-0252/</a></li>
+<li>Built-in functions — детальное описание работы всех встроенных функций. <a class="reference external" href="http://docs.python.org/library/functions.html">http://docs.python.org/library/functions.html</a></li>
+<li>Data model — детальное описание модели данных python&#8217;а. <a class="reference external" href="http://docs.python.org/reference/datamodel.html">http://docs.python.org/reference/datamodel.html</a></li>
+<li>Python types and objects — объяснение объектной модели python на простых примерах с картинками. <a class="reference external" href="http://www.cafepy.com/article/python_types_and_objects/python_types_and_objects.html">http://www.cafepy.com/article/python_types_and_objects/python_types_and_objects.html</a></li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h2>Примечания<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<p>[1] Более подробно про super — тут. <a class="reference external" href="http://docs.python.org/library/functions.html#super">http://docs.python.org/library/functions.html#super</a></p>
+</div>
+</div>
+<div class="section" id="id12">
+<h1>Заметки об объектной системе языка 3<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h1>
+<p>(origin: <a class="reference external" href="http://habrahabr.ru/blogs/python/114587/">http://habrahabr.ru/blogs/python/114587/</a>)</p>
+<p>Третья часть заметок об объектной системе python&#8217;a (первая и вторая части). В статье рассказывается о том, почему c.__call__() не то же самое, что и c(), как реализовать singleton с помощью метаклассов, что такое name mangling и как оно работает.</p>
+<p>c.__call__ vs c(), c.__setattr__ vs setattr</p>
+<p>Легко убедиться, что x(arg1, arg2) не равносильно x.__call__(arg1, arg2) для новых классов, хотя для старых это справедливо.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">__call__</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="mi">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">TypeError</span>: <span class="n">&#39;C&#39; object is not callable</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="o">.</span><span class="n">__call__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="mi">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">()</span>
+<span class="go">42</span>
+</pre></div>
+</div>
+<p>На самом деле правильно:</p>
+<p>c() &lt;=&gt; type(c).__call__(с)</p>
+<p>Абсолютно такая же ситуация с __setattr__/setattr и многими другими магическими (и специальными) методами и соответствующими встроенными функциями, которые определены для всех объектов, в том числе и для объектов типа — классов.</p>
+<p>Зачем это было сделано можно рассмотреть на примере setattr [1].
+В начале убедимся, что setattr(a, &#8216;x&#8217;, 1)  &lt;==&gt; type(a).__setattr__(a, &#8216;x&#8217;, 1).</p>
+<p>a.x = 1 &lt;=&gt; setattr(a, &#8216;x&#8217;, 1)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span> <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">&lt;__main__.A object at 0x7fafa9b26f90&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">setattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{&#39;y&#39;: 2, &#39;x&#39;: 1}</span>
+</pre></div>
+</div>
+<p>Устанавливаем с помощью метода __setattr__ новый атрибут, который пойдет в __dict__</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>вроде бы все правильно:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{&#39;y&#39;: 2, &#39;x&#39;: 1, &#39;z&#39;: 3}</span>
+</pre></div>
+</div>
+<p>Однако:</p>
+<p>Установим в a.__setattr__ заведомо неправильный метод:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__setattr__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="mi">42</span>
+</pre></div>
+</div>
+<p>Вызов, которого приводит к ошибке:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">TypeError</span>: <span class="n">&lt;lambda&gt;() takes exactly 1 argument (2 given)</span>
+</pre></div>
+</div>
+<p>Однако, несмотря на это, setattr работает:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">setattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{&#39;y&#39;: 2, &#39;x&#39;: 1, &#39;__setattr__&#39;: &lt;function &lt;lambda&gt; at 0x7fafa9b3a140&gt;, &#39;z&#39;: 3, &#39;foo&#39;: &#39;bar&#39;}</span>
+</pre></div>
+</div>
+<p>А вот если переопределить метод класса:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__setattr__</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="mi">42</span>
+</pre></div>
+</div>
+<p>то setattr для экземпляра класса выдаст ошибку:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">setattr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;quux&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">TypeError</span>: <span class="n">&lt;lambda&gt;() takes exactly 1 argument (3 given)</span>
+</pre></div>
+</div>
+<p>Зачем это было сделано?
+Пусть setattr(a, &#8216;x&#8217;,1) тоже самое, что a.__setattr__(&#8216;x&#8217;, 1), тогда</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&#39;for instances&#39;</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span>
+<span class="gp">... </span>        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Установим новый атрибут для a. a.x = 1 &lt;==&gt; a.__setattr__(&#8216;x&#8217;, 1)
+Все нормально:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">for instances x 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{&#39;x&#39;: 1}</span>
+</pre></div>
+</div>
+<p>А теперь попробуем установить новый атрибут для самого класса, он же ведь тоже является объектом: A.foo = &#8216;bar&#8217; &lt;==&gt; A.__setattr__(&#8216;foo&#8217;, &#8216;bar&#8217;)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">TypeError</span>: <span class="n">unbound method __setattr__() must be called with A instance as first argument (got str instance instead)</span>
+</pre></div>
+</div>
+<p>Все логично, согласно алгоритму поиска атрибутов в классах (типах), сначала атрибут ищется в __dict__ класса (типа):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;__setattr__&#39;</span><span class="p">]</span>
+<span class="go">&lt;function __setattr__ at 0x7f699d22fa28&gt;</span>
+</pre></div>
+</div>
+<p>Но дело в том, что он предназначен для экземпляров класса, а не для самого класса. Поэтому вызов A.__setattr__(&#8216;foo&#8217;, &#8216;bar&#8217;) будет неправильным. И именно поэтому setattr() должен делать явный поиск в классе (типе) объекта. Собственно, по этой же причине это сделано и для других магических методов __add__, __len__, __getattr__ и т.д.</p>
+<div class="section" id="callable">
+<h2>Класс, как вызываемый (callable) тип<a class="headerlink" href="#callable" title="Permalink to this headline">¶</a></h2>
+<p>Класс (тип) — это вызываемый (callable) тип, и его вызов — это конструктор объекта.</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; class C(object):
+...     pass
+...
+&gt;&gt;&gt; С()
+&lt;__main__.C object at 0x1121e10&gt;</pre>
+</div>
+<p>Эквивалентно:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">C</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="go">&lt;__main__.C object at 0x1121ed0&gt;</span>
+</pre></div>
+</div>
+<p>Т.к. C — обычный класс, то его метаклассом является type, поэтому будет использован вызов type(C).__call__(С) &lt;==&gt; type.__call__(С). Внутри type.__call__(C) уже происходит вызов C.__new__(cls, ...) и C.__init__(self, ...).</p>
+<p>Важно то, что и __new__ и __init__ ищутся с помощью обычного алгоритма поиска атрибутов в классе. И при отсутствии их в C.__dict__, будут вызваны методы из родительского класса object: object.__new__ и object.__init__, в то время как метод __call__ — это метод класса (типа) объекта — type: type.__call__(C).</p>
+</div>
+<div class="section" id="singleton-v-2">
+<h2>Singleton v.2<a class="headerlink" href="#singleton-v-2" title="Permalink to this headline">¶</a></h2>
+<p>Зная это, создадим метаклассную реализацию синглтона.</p>
+<p>Что нам нужно от синглтона? Чтобы вызов A() возвращал один и тот же объект.</p>
+<p>A() &lt;=&gt; type(A).__call__(A)</p>
+<p>Значит, нам нужно изменить поведение метода __call__, который определяется в метаклассе. Сделаем это, не забывая, что в общем случае в __call__ могут передаваться любые параметры.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">SingletonMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SingletonMeta</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Заглушка готова.
+Пусть единственный объект будет храниться в классовом атрибуте instance. Для этого инициализируем в cls.instance в __init__.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">SingletonMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">cls</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SingletonMeta</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>И вставим проверку в __call__:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">SingletonMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">cls</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">instance</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">cls</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">SingletonMeta</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">instance</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">SingletonMeta</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<p>Проверяем, что все работает как надо.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="p">()</span> <span class="ow">is</span> <span class="n">C</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">x</span>
+<span class="go">42</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Вызываемый (callable) тип в качестве метакласса</p>
+<p>Метаклассом может быть не только объект типа type, но и вообще любой вызываемый (callable) тип.</p>
+<p>Достаточно просто создать функцию, в которой создается класс с помощью метакласса type.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">mymeta</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">attrs</span><span class="p">[</span><span class="s">&#39;foo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;bar&#39;</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">mymeta</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span><span class="p">()</span>
+<span class="go">&lt;__main__.D object at 0x7fafa9abc090&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">D</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">foo</span>
+<span class="go">&#39;bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">&lt;dictproxy object at 0x7fafa9b297f8&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+<span class="go">{&#39;__module__&#39;: &#39;__main__&#39;, &#39;__metaclass__&#39;: &lt;function mymeta at 0x7fafa9b3a9b0&gt;, &#39;__dict__&#39;: &lt;attribute &#39;__dict__&#39; of &#39;D&#39; objects&gt;, &#39;foo&#39;: &#39;bar&#39;, &#39;__weakref__&#39;: &lt;attribute &#39;__weakref__&#39; of &#39;D&#39; objects&gt;, &#39;__doc__&#39;: None}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id13">
+<h2>Определения класса<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h2>
+<p>Конструкция (statement) определения класса — это просто конструкция. Также как и любое statement оно может появляться где угодно в коде программы.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="bp">True</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="k">print</span> <span class="mi">42</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">&lt;class &#39;__main__.A&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="go">42</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>В конструкции &#8216;class&#8217; любые определенные «внутри» переменные, функции, классы, накапливаются в __dict__. А в определении можно использовать любые другие конструкции — циклы, if&#8217;ы:.</p>
+<p>Поэтому можно делать так:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="k">print</span> <span class="s">&#39;1&gt;2&#39;</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="k">print</span> <span class="s">&#39;else&#39;</span>
+<span class="gp">...</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">()</span>
+<span class="go">&lt;__main__.A object at 0x7fafa9abc150&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">AttributeError</span>: <span class="n">&#39;A&#39; object has no attribute &#39;foo&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">()</span><span class="o">.</span><span class="n">bar</span><span class="p">()</span>
+<span class="go">else</span>
+</pre></div>
+</div>
+<p>или так
+&gt;&gt;&gt; class A(object):
+...     if 1 &gt; 2:
+...         x = 1
+...         def foo(self):
+...             print &#8216;if&#8217;
+...     else:
+...         y = 1
+...         def bar(self):
+...             print &#8216;else&#8217;
+...
+&gt;&gt;&gt; A.x
+Traceback (most recent call last):</p>
+<blockquote>
+<div>File &#8220;&lt;stdin&gt;&#8221;, line 1, in &lt;module&gt;</div></blockquote>
+<p>AttributeError: type object &#8216;A&#8217; has no attribute &#8216;x&#8217;
+&gt;&gt;&gt; A.y
+1
+&gt;&gt;&gt; A.foo
+Traceback (most recent call last):</p>
+<blockquote>
+<div>File &#8220;&lt;stdin&gt;&#8221;, line 1, in &lt;module&gt;</div></blockquote>
+<p>AttributeError: type object &#8216;A&#8217; has no attribute &#8216;foo&#8217;
+&gt;&gt;&gt; A.bar
+&lt;unbound method A.bar&gt;
+&gt;&gt;&gt; A.bar()
+Traceback (most recent call last):</p>
+<blockquote>
+<div>File &#8220;&lt;stdin&gt;&#8221;, line 1, in &lt;module&gt;</div></blockquote>
+<p>TypeError: unbound method bar() must be called with A instance as first argument (got nothing instead)
+&gt;&gt;&gt; A().bar()
+else
+&gt;&gt;&gt;</p>
+<p>Можно вкладывать одно определение в другое.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">pass</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="p">()</span>
+<span class="go">&lt;__main__.A object at 0x7fafa9abc2d0&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span>
+<span class="go">&lt;dictproxy object at 0x7fafa9b340f8&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+<span class="go">{&#39;__dict__&#39;: &lt;attribute &#39;__dict__&#39; of &#39;A&#39; objects&gt;, &#39;__module__&#39;: &#39;__main__&#39;, &#39;B&#39;: &lt;class &#39;__main__.B&#39;&gt;, &#39;__weakref__&#39;: &lt;attribute &#39;__weakref__&#39; of &#39;A&#39; objects&gt;, &#39;__doc__&#39;: None}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">B</span><span class="p">()</span>
+<span class="go">&lt;__main__.B object at 0x7fafa9abc310&gt;</span>
+</pre></div>
+</div>
+<p>Или же динамически создавать методы класса:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">FIELDS</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">FIELDS</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="nb">locals</span><span class="p">()[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="mi">42</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">a</span><span class="p">()</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">b</span><span class="p">()</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">c</span><span class="p">()</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">d</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">AttributeError</span>: <span class="n">&#39;A&#39; object has no attribute &#39;d&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Хотя конечно такое наверняка крайне не рекомендуется делать в обычной практике, и лучше воспользоваться более идиоматичными средствами.</p>
+<p>Name mangling</p>
+<p>И еще про определения класса. Про name mangling.</p>
+<p>Любой атрибут внутри определения класса classname вида &#8221;.__{attr}&#8221; (attr при этом имеет не более одного _ в конце) подменяется на &#8220;_{classname}__{attr}&#8221;. Таким образом, внутри классов можно иметь «скрытые» приватные атрибуты, которые не «видны» наследникам и экземплярам класса.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">__private_foo</span><span class="o">=</span><span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">__private_foo</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">AttributeError</span>: <span class="n">type object &#39;A&#39; has no attribute &#39;__private_foo&#39;</span>
+</pre></div>
+</div>
+<p>Увидеть переменную можно так:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span><span class="o">.</span><span class="n">_A__private_foo</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>Ну и храниться она в __dict__ класса:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+<span class="go">{&#39;__dict__&#39;: &lt;attribute &#39;__dict__&#39; of &#39;A&#39; objects&gt;, &#39;_A__private_foo&#39;: 1, &#39;__module__&#39;: &#39;__main__&#39;, &#39;__weakref__&#39;: &lt;attribute &#39;__weakref__&#39; of &#39;A&#39; objects&gt;, &#39;__doc__&#39;: None}</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Наследники доступа не имеют:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">__private_foo</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">3</span>, in <span class="n">foo</span>
+<span class="gr">AttributeError</span>: <span class="n">&#39;B&#39; object has no attribute &#39;_B__private_foo&#39;</span>
+</pre></div>
+</div>
+<p>В принципе обеспечить доступ внешний доступ к атрибутам типа __{attr} внутри определения класса, т.е. обойти name_mangling, можно с помощью __dict__.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;__value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="p">()</span><span class="o">.</span><span class="n">__value</span>
+<span class="go">1</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Однако, такие вещи крайне не рекомендуется делать из-за того, что доступ к таким атрибутам будет невозможен внутри определения любого другого класса из-за подмены &#8221;.__{attr}&#8221; на &#8221;._{classname}__{attr}&#8221; вне зависимости к какому объекту или классу они относятся, т.е.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span><span class="o">.</span><span class="n">__value</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">D</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">3</span>, in <span class="n">__init__</span>
+<span class="gr">AttributeError</span>: <span class="n">&#39;C&#39; object has no attribute &#39;_D__value&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="p">()</span><span class="o">.</span><span class="n">__value</span>
+<span class="go">1</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Хотя С().__value прекрасно отработает вне определения класса. Чтобы обойти также придется использовать __dict__[&#8216;__value&#8217;].</p>
+</div>
+<div class="section" id="id14">
+<h2>Cсылки<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Unifying types and classes in Python — главный документ, объясняющий что, как и зачем в новых классах. <a class="reference external" href="http://www.python.org/download/releases/2.2.3/descrintro/#references">http://www.python.org/download/releases/2.2.3/descrintro/#references</a></li>
+<li>Making Types Look More Like Classes — PEP 252, описывающий отличие старых классов от новых. <a class="reference external" href="http://www.python.org/dev/peps/pep-0252/">http://www.python.org/dev/peps/pep-0252/</a></li>
+<li>Built-in functions — детальное описание работы всех встроенных функций. <a class="reference external" href="http://docs.python.org/library/functions.html">http://docs.python.org/library/functions.html</a></li>
+<li>Data model — детальное описание модели данных python&#8217;а. <a class="reference external" href="http://docs.python.org/reference/datamodel.html">http://docs.python.org/reference/datamodel.html</a></li>
+<li>Python types and objects — объяснение объектной модели python на простых примерах с картинками. <a class="reference external" href="http://www.cafepy.com/article/python_types_and_objects/python_types_and_objects.html">http://www.cafepy.com/article/python_types_and_objects/python_types_and_objects.html</a></li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h2>Примечания<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<p>[1] В официальной документации приводится пример с __len__/len и __hash__/hash. <a class="reference external" href="http://docs.python.org/reference/datamodel.html#special-method-lookup-for-new-style-classes">http://docs.python.org/reference/datamodel.html#special-method-lookup-for-new-style-classes</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Заметки об объектной системе языка 1</a><ul>
+<li><a class="reference internal" href="#id2">Объекты</a></li>
+<li><a class="reference internal" href="#id3">Объекты и классы</a></li>
+<li><a class="reference internal" href="#id4">Поиск атрибутов в обычном объекте</a></li>
+<li><a class="reference internal" href="#c">Cсылки</a></li>
+<li><a class="reference internal" href="#id5">Примечания</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id6">Заметки об объектной системе языка 2</a><ul>
+<li><a class="reference internal" href="#id7">Классы</a></li>
+<li><a class="reference internal" href="#singleton-v-1">Singleton v.1</a></li>
+<li><a class="reference internal" href="#id8">Классы и метаклассы</a></li>
+<li><a class="reference internal" href="#type-object">О type и object</a></li>
+<li><a class="reference internal" href="#id9">Метаклассы</a></li>
+<li><a class="reference internal" href="#id10">Cсылки</a></li>
+<li><a class="reference internal" href="#id11">Примечания</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id12">Заметки об объектной системе языка 3</a><ul>
+<li><a class="reference internal" href="#callable">Класс, как вызываемый (callable) тип</a></li>
+<li><a class="reference internal" href="#singleton-v-2">Singleton v.2</a></li>
+<li><a class="reference internal" href="#id13">Определения класса</a></li>
+<li><a class="reference internal" href="#id14">Cсылки</a></li>
+<li><a class="reference internal" href="#id15">Примечания</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pythonic.html"
+                        title="previous chapter">Pythonic</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/pyobjectnotes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="pythonic.html" title="Pythonic"
+             >previous</a> |</li>
+        <li><a href="index.html">Python book v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Vladimir Shulyak.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

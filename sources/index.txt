@@ -13,6 +13,7 @@ Contents:
 
    questionspy
    pythonic
+   pyobjectnotes
 
 Indices and tables
 ==================
