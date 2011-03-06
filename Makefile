@@ -13,7 +13,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
 project=pybook
-tmp_docs_dir=/tmp/pt-tmp-docs
+tmp_docs_dir=/tmp/py-tmp-docs
 
 .PHONY: help clean html ghdocs dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
 
